@@ -1,29 +1,43 @@
 FROM php:8.2-cli
 
+# Directorio de trabajo
 WORKDIR /var/www
 
-# Instalar dependencias del sistema
+# Instalar dependencias del sistema (IMPORTANTES para Laravel + PostgreSQL)
 RUN apt-get update && apt-get install -y \
-    git curl libpng-dev libonig-dev libxml2-dev zip unzip
+    git \
+    curl \
+    unzip \
+    zip \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    libpq-dev
 
-# Extensiones PHP necesarias para Laravel
-RUN docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath
-
-RUN apt-get update && apt-get install -y libpq-dev \
-    && docker-php-ext-install pdo pdo_pgsql mbstring
+# Instalar extensiones PHP necesarias
+RUN docker-php-ext-install \
+    pdo \
+    pdo_pgsql \
+    mbstring \
+    exif \
+    pcntl \
+    bcmath \
+    gd
 
 # Instalar Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copiar proyecto
+# Copiar proyecto al contenedor
 COPY . .
 
 # Instalar dependencias Laravel
 RUN composer install --no-dev --optimize-autoloader
 
-# Permisos
+# Permisos necesarios para Laravel
 RUN chmod -R 775 storage bootstrap/cache
 
-EXPOSE $PORT
+# Exponer puerto que usa Render
+EXPOSE 10000
 
-CMD php artisan serve --host=0.0.0.0 --port=$PORT
+# Levantar servidor Laravel
+CMD php artisan serve --host=0.0.0.0 --port=${PORT:-10000}
