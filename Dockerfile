@@ -1,43 +1,31 @@
 FROM php:8.2-cli
 
-# Directorio de trabajo
 WORKDIR /var/www
 
-# Instalar dependencias del sistema (IMPORTANTES para Laravel + PostgreSQL)
 RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    unzip \
-    zip \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev \
+    git curl unzip zip \
+    libpng-dev libonig-dev libxml2-dev \
     libpq-dev
 
-# Instalar extensiones PHP necesarias
-RUN docker-php-ext-install \
-    pdo \
-    pdo_pgsql \
-    mbstring \
-    exif \
-    pcntl \
-    bcmath \
-    gd
+# Node.js (para Vite)
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs
 
-# Instalar Composer
+RUN docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd
+
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copiar proyecto al contenedor
 COPY . .
 
-# Instalar dependencias Laravel
+# Laravel backend
 RUN composer install --no-dev --optimize-autoloader
 
-# Permisos necesarios para Laravel
+# Frontend (Vite FIX)
+RUN npm install
+RUN npm run build
+
 RUN chmod -R 775 storage bootstrap/cache
 
-# Exponer puerto que usa Render
 EXPOSE 10000
 
-# Levantar servidor Laravel
 CMD php artisan serve --host=0.0.0.0 --port=${PORT:-10000}
