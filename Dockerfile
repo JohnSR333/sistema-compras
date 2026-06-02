@@ -7,7 +7,10 @@ RUN apt-get update && apt-get install -y \
     git curl libpng-dev libonig-dev libxml2-dev zip unzip
 
 # Extensiones PHP necesarias para Laravel
-RUN docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd
+RUN docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath
+
+RUN apt-get update && apt-get install -y libpq-dev \
+    && docker-php-ext-install pdo pdo_pgsql mbstring
 
 # Instalar Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
