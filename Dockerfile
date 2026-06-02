@@ -61,12 +61,6 @@ RUN npm run build
 # =========================================
 RUN chmod -R 775 storage bootstrap/cache
 
-# =========================================
-# 9. LIMPIEZA CACHE LARAVEL
-# =========================================
-RUN php artisan config:clear
-RUN php artisan cache:clear
-RUN php artisan view:clear
 
 # =========================================
 # 10. PUERTO RENDER
