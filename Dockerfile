@@ -9,10 +9,12 @@ RUN apt-get update && apt-get install -y \
     git \
     curl \
     libonig-dev \
-    libxml2-dev
+    libxml2-dev \
+    libpq-dev  # ← Esto es lo que faltaba
 
+# Instalar extensiones de PHP (incluyendo PostgreSQL)
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
-RUN docker-php-ext-install gd mbstring pdo pdo_mysql zip
+RUN docker-php-ext-install gd mbstring pdo pdo_mysql pdo_pgsql zip  # ← Agregado pdo_pgsql
 
 RUN a2enmod rewrite
 
@@ -27,7 +29,6 @@ RUN composer install --no-dev --optimize-autoloader
 RUN chown -R www-data:www-data storage bootstrap/cache
 RUN chmod -R 775 storage bootstrap/cache
 
-# 🔴 LO IMPORTANTE: Configurar el DocumentRoot a la carpeta public
 RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
 
 EXPOSE 80
