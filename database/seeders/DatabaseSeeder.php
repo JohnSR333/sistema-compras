@@ -16,12 +16,12 @@ class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
 
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
+        // Primero crear el usuario admin
+        $this->call(UserSeeder::class);
         
+        // Luego crear los datos de prueba con factories
         User::factory(10)->create();
         Proveedor::factory(10)->create();
         Ordencompra::factory(10)->create();
@@ -29,11 +29,5 @@ class DatabaseSeeder extends Seeder
         Detallecompra::factory(10)->create();
         Metodopago::factory(3)->create();
         Pago::factory(10)->create();
-        /*
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);*/
     }
 }
