@@ -10,11 +10,10 @@ RUN apt-get update && apt-get install -y \
     curl \
     libonig-dev \
     libxml2-dev \
-    libpq-dev  # ← Esto es lo que faltaba
+    libpq-dev
 
-# Instalar extensiones de PHP (incluyendo PostgreSQL)
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
-RUN docker-php-ext-install gd mbstring pdo pdo_mysql pdo_pgsql zip  # ← Agregado pdo_pgsql
+RUN docker-php-ext-install gd mbstring pdo_mysql pdo_pgsql zip
 
 RUN a2enmod rewrite
 
@@ -33,8 +32,10 @@ RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available
 
 EXPOSE 80
 
+# 🔴 NUEVO: Script que ejecuta migraciones y crea usuario si no existe
 CMD php artisan key:generate && \
     php artisan config:cache && \
     php artisan route:cache && \
     php artisan migrate --force && \
+    php artisan db:seed --force && \
     apache2-foreground
