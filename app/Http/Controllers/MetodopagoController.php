@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MetodoPago;
+use App\Models\Metodopago;
 use App\Http\Requests\MetodoPagoRequest;
 use Illuminate\Database\QueryException;
 use Exception;
 use Illuminate\Support\Facades\Log;
 
-class MetodoPagoController extends Controller
+class MetodopagoController extends Controller
 {
     public function index()
     {
-        $metodopagos = MetodoPago::all();
+        $metodopagos = Metodopago::all();
         return view('metodopagos.index', compact('metodopagos'));
     }
 
@@ -35,19 +35,19 @@ class MetodoPagoController extends Controller
 
     public function show($id)
     {
-        $metodopago = MetodoPago::findOrFail($id);
+        $metodopago = Metodopago::findOrFail($id);
         return view('metodopagos.show', compact('metodopago'));
     }
 
     public function edit($id)
     {
-        $metodopago = MetodoPago::findOrFail($id);
+        $metodopago = Metodopago::findOrFail($id);
         return view('metodopagos.edit', compact('metodopago'));
     }
 
     public function update(MetodoPagoRequest $request, $id)
     {
-        $metodopago = MetodoPago::findOrFail($id);
+        $metodopago = Metodopago::findOrFail($id);
 
         $metodopago->update([
             'nombre' => $request->nombre,
@@ -61,7 +61,7 @@ class MetodoPagoController extends Controller
     public function destroy($id)
     {
         try {
-            $metodopago = MetodoPago::findOrFail($id);
+            $metodopago = Metodopago::findOrFail($id);
             $metodopago->delete();
             return redirect()->route('metodopagos.index')->with('successMsg', 'Método de pago eliminado exitosamente');
         } catch (QueryException $e) {
@@ -75,7 +75,7 @@ class MetodoPagoController extends Controller
 
     public function cambioestado(Request $request)
     {
-        $metodopago = MetodoPago::find($request->id);
+        $metodopago = Metodopago::find($request->id);
         if ($metodopago) {
             $metodopago->estado = $request->estado;
             $metodopago->save();

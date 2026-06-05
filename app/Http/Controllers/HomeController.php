@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Proveedor;
 use App\Models\Producto;
-use App\Models\OrdenCompra;
+use App\Models\Ordencompra;
 use App\Models\Pago;
-use App\Models\MetodoPago;
-use App\Models\DetalleCompra;
+use App\Models\Metodopago;
+use App\Models\Detallecompra;
 
 class HomeController extends Controller
 {
@@ -20,11 +20,11 @@ class HomeController extends Controller
 
         $totalProductos = Producto::count();
 
-        $totalOrdenes = OrdenCompra::count();
+        $totalOrdenes = Ordencompra::count();
 
         $totalPagos = Pago::count();
 
-        $totalMetodos = MetodoPago::count();
+        $totalMetodos = Metodopago::count();
 
         $totalDetalles = Detallecompra::count();
 

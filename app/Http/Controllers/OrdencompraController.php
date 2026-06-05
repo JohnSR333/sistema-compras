@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\OrdenCompra;
-use App\Models\DetalleCompra;
+use App\Models\Ordencompra;
+use App\Models\Detallecompra;
 use App\Models\Producto;
 use App\Models\Proveedor;
-use App\Models\MetodoPago;
+use App\Models\Metodopago;
 use App\Models\Pago;
 use Illuminate\Http\Request;
 use PDF;
@@ -24,7 +24,7 @@ class OrdenCompraController extends Controller
 
     public function index()
     {
-        $ordencompras = OrdenCompra::with('proveedor')->get();
+        $ordencompras = Ordencompra::with('proveedor')->get();
         return view('ordencompras.index', compact('ordencompras'));
     }
 
@@ -32,7 +32,7 @@ class OrdenCompraController extends Controller
     {
         $proveedores = Proveedor::where('estado', '1')->get();
         $productos = Producto::where('estado', '1')->get();
-        $metodosPago = MetodoPago::where('estado', '1')->get();
+        $metodosPago = Metodopago::where('estado', '1')->get();
         return view('ordencompras.create', compact('proveedores', 'productos', 'metodosPago'));
     }
 
@@ -64,7 +64,7 @@ class OrdenCompraController extends Controller
         $total = 0;
 
         // Crear orden
-        $orden = OrdenCompra::create([
+        $orden = Ordencompra::create([
             'fecha' => $request->fecha,
             'proveedor_id' => $request->proveedor_id,
             'total' => 0,
@@ -80,7 +80,7 @@ class OrdenCompraController extends Controller
             $subtotal = $producto->preciocompra * $item['cantidad'];
             $total += $subtotal;
 
-            DetalleCompra::create([
+            Detallecompra::create([
                 'ordencompra_id' => $orden->id,
                 'producto_id' => $item['id'],
                 'cantidad' => $item['cantidad'],
@@ -147,22 +147,22 @@ class OrdenCompraController extends Controller
 
     public function show($id)
     {
-        $orden = OrdenCompra::with(['proveedor', 'detalles.producto', 'pagos'])->findOrFail($id);
+        $orden = Ordencompra::with(['proveedor', 'detalles.producto', 'pagos'])->findOrFail($id);
         return view('ordencompras.show', compact('orden'));
     }
 
     public function edit($id)
     {
-        $orden = OrdenCompra::findOrFail($id);
+        $orden = Ordencompra::findOrFail($id);
         $proveedores = Proveedor::where('estado', '1')->get();
         $productos = Producto::where('estado', '1')->get();
-        $metodosPago = MetodoPago::where('estado', '1')->get();
+        $metodosPago = Metodopago::where('estado', '1')->get();
         return view('ordencompras.edit', compact('orden', 'proveedores', 'productos', 'metodosPago'));
     }
 
     public function update(Request $request, $id)
     {
-        $orden = OrdenCompra::findOrFail($id);
+        $orden = Ordencompra::findOrFail($id);
 
         $request->validate([
             'proveedor_id' => 'required|exists:proveedores,id',
@@ -183,7 +183,7 @@ class OrdenCompraController extends Controller
     public function destroy($id)
     {
         try {
-            $orden = OrdenCompra::findOrFail($id);
+            $orden = Ordencompra::findOrFail($id);
 
             foreach ($orden->detalles as $detalle) {
                 $producto = $detalle->producto;
@@ -201,7 +201,7 @@ class OrdenCompraController extends Controller
 
     public function cambioestado(Request $request)
     {
-        $orden = OrdenCompra::find($request->id);
+        $orden = Ordencompra::find($request->id);
         if ($orden) {
             $orden->estado = $request->estado;
             $orden->save();
@@ -212,7 +212,7 @@ class OrdenCompraController extends Controller
     // PDF
     public function generarPDF($id)
     {
-        $orden = OrdenCompra::with(['proveedor', 'detalles.producto'])->findOrFail($id);
+        $orden = Ordencompra::with(['proveedor', 'detalles.producto'])->findOrFail($id);
         $data = ['orden' => $orden, 'fecha' => now()->format('d/m/Y H:i')];
         $pdf = PDF::loadView('ordencompras.pdf', $data)->setPaper('a4', 'portrait');
         return $pdf->stream('orden-compra-' . $orden->id . '.pdf');
@@ -221,7 +221,7 @@ class OrdenCompraController extends Controller
     // EXCEL
     public function generarExcel($id)
     {
-        $orden = OrdenCompra::with(['proveedor', 'detalles.producto'])->findOrFail($id);
+        $orden = Ordencompra::with(['proveedor', 'detalles.producto'])->findOrFail($id);
         return Excel::download(new OrdenCompraExport($orden), 'orden-compra-' . $id . '.xlsx');
     }
 
