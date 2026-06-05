@@ -22,8 +22,8 @@ class OrdenCompraController extends Controller
 
 public function exportarExcel()
     {
-        // Le quitamos la "s" a Compras para que coincida exactamente con tu archivo real
-        return Excel::download(new \App\Exports\OrdenCompraExport, 'ordenes_de_compra_general.xlsx');
+        // Llamamos al archivo "Completo" o "General", que no pide una orden individual
+        return Excel::download(new \App\Exports\OrdenesComprasCompletoExport, 'ordenes_de_compra_general.xlsx');
     }
 
     public function index()
