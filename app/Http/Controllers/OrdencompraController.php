@@ -15,7 +15,7 @@ use App\Exports\OrdenCompraExport;
 use App\Exports\OrdenesComprasExport;
 use App\Exports\OrdenesExport;
 
-class OrdencompraController extends Controller
+class OrdenCompraController extends Controller
 {
     public function exportarExcel()
     {
