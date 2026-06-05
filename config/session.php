@@ -156,7 +156,7 @@ return [
     |
     */
 
-    'domain' => env('SESSION_DOMAIN'),
+      'domain' => env('SESSION_DOMAIN', '.onrender.com'),
 
     /*
     |--------------------------------------------------------------------------
@@ -168,8 +168,8 @@ return [
     | the cookie from being sent to you when it can't be done securely.
     |
     */
+'secure' => env('SESSION_SECURE_COOKIE', true),
 
-    'secure' => env('SESSION_SECURE_COOKIE'),
 
     /*
     |--------------------------------------------------------------------------
@@ -199,8 +199,7 @@ return [
     |
     */
 
-    'same_site' => env('SESSION_SAME_SITE', 'lax'),
-
+'same_site' => 'none',
     /*
     |--------------------------------------------------------------------------
     | Partitioned Cookies
