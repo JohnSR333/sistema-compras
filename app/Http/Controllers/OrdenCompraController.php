@@ -22,8 +22,8 @@ class OrdenCompraController extends Controller
 
 public function exportarExcel()
     {
-        // "OrdenComprasExport" es un ejemplo, debes poner el nombre del archivo Export que creaste
-        return Excel::download(new \App\Exports\OrdenComprasExport, 'ordenes_de_compra.xlsx');
+        // Le quitamos la "s" a Compras para que coincida exactamente con tu archivo real
+        return Excel::download(new \App\Exports\OrdenCompraExport, 'ordenes_de_compra_general.xlsx');
     }
 
     public function index()
