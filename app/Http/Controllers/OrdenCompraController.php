@@ -20,10 +20,11 @@ class OrdenCompraController extends Controller
 {
     
 
-public function generarExcelGeneral()
-{
-    return Excel::download(new OrdenesComprasCompletoExport(), 'ordenes-compras-completo.xlsx');
-}
+public function exportarExcel()
+    {
+        // "OrdenComprasExport" es un ejemplo, debes poner el nombre del archivo Export que creaste
+        return Excel::download(new \App\Exports\OrdenComprasExport, 'ordenes_de_compra.xlsx');
+    }
 
     public function index()
     {
