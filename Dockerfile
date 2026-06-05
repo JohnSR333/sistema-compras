@@ -23,9 +23,7 @@ WORKDIR /var/www/html
 
 COPY . .
 
-RUN rm -f .env
-
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN composer install --optimize-autoloader --no-dev
 
 RUN chown -R www-data:www-data storage bootstrap/cache
 RUN chmod -R 775 storage bootstrap/cache
@@ -34,6 +32,4 @@ RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available
 
 EXPOSE 80
 
-# 🔴 COMANDO SIMPLIFICADO: sin key:generate ni config:cache
-CMD php artisan migrate --force && \
-    apache2-foreground
+CMD ["apache2-foreground"]

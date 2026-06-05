@@ -92,6 +92,5 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('pagos', PagoController::class);
     Route::get('cambioestadopago', [PagoController::class, 'cambioestado'])->name('cambioestadopago');
     Route::get('/prueba', function() {
-    return response()->json(['mensaje' => 'Funciona', 'csrf' => csrf_token()]);
 });
 });
