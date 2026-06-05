@@ -42,7 +42,7 @@
                 <div class="two-columns">
                     <div class="form-group">
                         <label>Proveedor <strong style="color:red;">(*)</strong></label>
-                        <select name="proveedor_id" class="form-control" required>
+                        <select name="proveedor_id" class="form-control select2" required>
                             <option value="">Seleccione un proveedor</option>
                             @foreach($proveedores as $proveedor)
                                 <option value="{{ $proveedor->id }}">{{ $proveedor->nombre }}</option>
@@ -68,7 +68,7 @@
                     
                     <div class="form-group" id="metodopagoDiv">
                         <label>Método de Pago <strong style="color:red;">(*)</strong></label>
-                        <select name="metodopago_id" class="form-control" required>
+                        <select name="metodopago_id" class="form-control select2" required>
                             <option value="">Seleccione un método</option>
                             @foreach($metodosPago as $metodo)
                                 <option value="{{ $metodo->id }}">{{ $metodo->nombre }}</option>
@@ -100,7 +100,7 @@
                 <div class="two-columns">
                     <div class="form-group">
                         <label>Producto 1</label>
-                        <select name="productos[0][id]" id="producto0" class="form-control" required>
+                        <select name="productos[0][id]" id="producto0" class="form-control select2" required>
                             <option value="">Seleccione un producto</option>
                             @foreach($productos as $producto)
                                 <option value="{{ $producto->id }}" 
@@ -155,6 +155,34 @@
     const abonoDiv = document.getElementById('abonoDiv');
     const abonoInicial = document.getElementById('abonoInicial');
     const saldoPendientePreview = document.getElementById('saldoPendientePreview');
+    
+    function initializeSelect2(selector) {
+        if (window.jQuery && typeof $.fn.select2 === 'function') {
+            $(selector).select2({
+                theme: 'bootstrap4',
+                width: '100%',
+                placeholder: 'Buscar...',
+                allowClear: true,
+                language: 'es'
+            });
+        }
+    }
+
+    function initSelect2All() {
+        if (window.jQuery && typeof $.fn.select2 === 'function') {
+            $('.select2').each(function() {
+                if (!$(this).data('select2')) {
+                    initializeSelect2(this);
+                }
+            });
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSelect2All);
+    } else {
+        initSelect2All();
+    }
     
     let contadorProductos = 1;
     
@@ -235,7 +263,7 @@
             <div class="two-columns">
                 <div class="form-group">
                     <label>Producto ${nuevoIndice + 1}</label>
-                    <select name="productos[${nuevoIndice}][id]" id="producto${nuevoIndice}" class="form-control" required>
+                    <select name="productos[${nuevoIndice}][id]" id="producto${nuevoIndice}" class="form-control select2" required>
                         <option value="">Seleccione un producto</option>
                         @foreach($productos as $producto)
                             <option value="{{ $producto->id }}" 
