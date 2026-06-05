@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pago;
-use App\Models\OrdenCompra;
-use App\Models\MetodoPago;
+use App\Models\Ordencompra;
+use App\Models\Metodopago;
 use App\Http\Requests\PagoRequest;
 use Illuminate\Database\QueryException;
 use Exception;
