@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\Models\OrdenCompra;
+use App\Models\Ordencompra;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -17,7 +17,7 @@ class OrdenesExport implements FromCollection, WithHeadings, WithMapping, WithSt
 {
     public function collection()
     {
-        return OrdenCompra::with(['proveedor', 'pagos.metodoPago'])->get();
+        return Ordencompra::with(['proveedor', 'pagos.metodoPago'])->get();
     }
 
     public function headings(): array
