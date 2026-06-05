@@ -35,6 +35,7 @@
             <h3>Crear Orden de Compra</h3>
         </div>
         <div class="card-body">
+            @include('layouts.partial.msg')
             <form method="POST" action="{{ route('ordencompras.store') }}" id="ordenForm">
                 @csrf
                 

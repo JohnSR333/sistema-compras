@@ -27,7 +27,7 @@ class ProductoController extends Controller
         $request->validate([
             'nombre'       => 'required',
             'preciocompra' => 'required|numeric|min:0',
-            'stockmaximo'  => 'required|integer|min:0',
+            'stockmaximo'  => 'required|integer|min:1',
             'imagen'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
@@ -83,7 +83,7 @@ class ProductoController extends Controller
         $request->validate([
             'nombre'       => 'required|unique:productos,nombre,' . $id,
             'preciocompra' => 'required|numeric|min:0',
-            'stockmaximo'  => 'required|integer|min:0',
+            'stockmaximo'  => 'required|integer|min:1',
             'imagen'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 

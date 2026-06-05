@@ -49,7 +49,7 @@
                                     <div class="col-lg-6 col-sm-6 col-md-6 col-xs-12">
                                         <div class="form-group">
                                             <label class="control-label">Stock Máximo <strong style="color:red;">(*)</strong></label>
-                                            <input type="number" class="form-control" name="stockmaximo" value="{{ $producto->stockmaximo }}">
+                                            <input type="number" min="1" class="form-control" name="stockmaximo" value="{{ $producto->stockmaximo }}">
                                             @error('stockmaximo')
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
