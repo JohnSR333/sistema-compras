@@ -35,22 +35,8 @@
             <h3>Crear Orden de Compra</h3>
         </div>
         <div class="card-body">
-            
-            @if ($errors->any())
-                <div class="alert alert-danger" style="background-color: #f8d7da; color: #721c24; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
-                    <strong>⚠️ ¡Atención! No se pudo registrar la orden:</strong>
-                    <ul style="margin-top: 5px; margin-bottom: 0;">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
             <form method="POST" action="{{ route('ordencompras.store') }}" id="ordenForm">
                 @csrf
-                
-                <div class="two-columns">
                 
                 <!-- Proveedor y Fecha en dos columnas -->
                 <div class="two-columns">
