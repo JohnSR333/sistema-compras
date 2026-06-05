@@ -14,13 +14,16 @@ use Excel;
 use App\Exports\OrdenCompraExport;
 use App\Exports\OrdenesComprasExport;
 use App\Exports\OrdenesExport;
+use App\Exports\OrdenesComprasCompletoExport;
 
 class OrdenCompraController extends Controller
 {
-    public function exportarExcel()
-    {
-        return Excel::download(new OrdenesExport(), 'ordenes-compras.xlsx');
-    }
+    
+
+public function generarExcelGeneral()
+{
+    return Excel::download(new OrdenesComprasCompletoExport(), 'ordenes-compras-completo.xlsx');
+}
 
     public function index()
     {
@@ -224,14 +227,9 @@ class OrdenCompraController extends Controller
 }
 
     // EXCEL
-    public function generarExcel($id)
-    {
-        $orden = Ordencompra::with(['proveedor', 'detalles.producto'])->findOrFail($id);
-        return Excel::download(new OrdenCompraExport($orden), 'orden-compra-' . $id . '.xlsx');
-    }
-
-    public function generarExcelGeneral()
-    {
-        return Excel::download(new OrdenesComprasExport(), 'ordenes-compras.xlsx');
-    }
+public function generarExcel($id)
+{
+    $orden = OrdenCompra::with(['proveedor', 'detalles.producto', 'pagos.metodoPago'])->findOrFail($id);
+    return Excel::download(new OrdenCompraCompletoExport($orden), 'orden-compra-' . $id . '.xlsx');
+}
 }

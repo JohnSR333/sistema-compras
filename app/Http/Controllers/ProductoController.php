@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
 use Exception;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
 
 class ProductoController extends Controller
 {
@@ -30,22 +31,26 @@ public function store(Request $request)
         'imagen'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
     ]);
 
+// Nuevo producto: stock normal = 0, stockmaximo = lo que ponga
     $rutaImagen = null;
 
     if ($request->hasFile('imagen')) {
-        $file = $request->file('imagen');
-        $nombreImagen = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+        // 1. Agarramos la imagen y la convertimos a texto (Base64) para mandarla por internet
+        $foto = base64_encode(file_get_contents($request->file('imagen')->path()));
         
-        // Ruta ABSOLUTA para garantizar que existe
-        $targetPath = '/var/www/html/public/images/productos';
-        
-        if (!file_exists($targetPath)) {
-            mkdir($targetPath, 0777, true);
+        // 2. Se la enviamos a ImgBB (REEMPLAZA LA KEY POR LA TUYA)
+        $respuesta = Http::asForm()->post('https://api.imgbb.com/1/upload', [
+            'key' => '9bf099bc90ef731c628393a42c0654c9', 
+            'image' => $foto,
+        ]);
+
+        // 3. Si se subió con éxito, guardamos el enlace permanente que nos da
+        if ($respuesta->successful()) {
+            $rutaImagen = $respuesta->json('data.url');
         }
-        
-        $file->move($targetPath, $nombreImagen);
-        $rutaImagen = '/images/productos/' . $nombreImagen;
     }
+
+    // Aquí sigue tu código normal de Producto::create...
 
     Producto::create([
         'nombre'        => $request->nombre,
