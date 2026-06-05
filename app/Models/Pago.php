@@ -21,11 +21,11 @@ class Pago extends Model
 
     public function ordenCompra()
     {
-        return $this->belongsTo(OrdenCompra::class, 'ordencompra_id');
+        return $this->belongsTo(Ordencompra::class, 'ordencompra_id');
     }
 
     public function metodoPago()
     {
-        return $this->belongsTo(MetodoPago::class, 'metodopago_id');
+        return $this->belongsTo(Metodopago::class, 'metodopago_id');
     }
 }
