@@ -19,6 +19,10 @@ COPY . .
 RUN composer install --optimize-autoloader --no-dev
 RUN chown -R www-data:www-data storage bootstrap/cache
 RUN chmod -R 775 storage bootstrap/cache
+# Crear la carpeta para imágenes y dar permisos
+RUN mkdir -p /var/www/html/public/images/productos
+RUN chown -R www-data:www-data /var/www/html/public/images
+RUN chmod -R 775 /var/www/html/public/images
 RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
 EXPOSE 80
 

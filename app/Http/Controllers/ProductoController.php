@@ -24,46 +24,37 @@ class ProductoController extends Controller
 public function store(Request $request)
 {
     $request->validate([
-        'nombre' => 'required',
+        'nombre'       => 'required',
         'preciocompra' => 'required|numeric|min:0',
-        'stockmaximo' => 'required|integer|min:0',
-        'imagen' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        'stockmaximo'  => 'required|integer|min:0',
+        'imagen'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
     ]);
 
-    $productoExistente = Producto::where('nombre', $request->nombre)->first();
-
-    if ($productoExistente) {
-        // SOLO SUMAR AL STOCK MÁXIMO, NO AL STOCK NORMAL
-        $productoExistente->stockmaximo += $request->stockmaximo;
-        $productoExistente->preciocompra = $request->preciocompra;
-        $productoExistente->save();
-        return redirect()->route('productos.index')->with('successMsg', 'Stock máximo actualizado');
-    }
-
-    // Nuevo producto: stock normal = 0, stockmaximo = lo que ponga
     $rutaImagen = null;
+
     if ($request->hasFile('imagen')) {
         $file = $request->file('imagen');
-        $nombre = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+        $nombreImagen = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
         
-        // 🔥 SOLUCIÓN: Definir la ruta y crear la carpeta si no existe en el servidor
-        $targetPath = public_path('images/productos');
+        // Ruta ABSOLUTA para garantizar que existe
+        $targetPath = '/var/www/html/public/images/productos';
+        
         if (!file_exists($targetPath)) {
             mkdir($targetPath, 0777, true);
         }
-
-        $file->move($targetPath, $nombre);
-        $rutaImagen = 'images/productos/' . $nombre;
+        
+        $file->move($targetPath, $nombreImagen);
+        $rutaImagen = '/images/productos/' . $nombreImagen;
     }
 
     Producto::create([
-        'nombre' => $request->nombre,
-        'preciocompra' => $request->preciocompra,
-        'descripcion' => $request->descripcion,
-        'stockmaximo' => $request->stockmaximo,
-        'stock' => 0,  // ← NUEVO PRODUCTO EMPIEZA CON STOCK 0
-        'imagen' => $rutaImagen,
-        'estado' => '1',
+        'nombre'        => $request->nombre,
+        'preciocompra'  => $request->preciocompra,
+        'descripcion'   => $request->descripcion,
+        'stockmaximo'   => $request->stockmaximo,
+        'stock'         => $request->stockmaximo,
+        'imagen'        => $rutaImagen,
+        'estado'        => '1',
         'registradopor' => auth()->user()->name,
     ]);
 
