@@ -23,7 +23,6 @@ WORKDIR /var/www/html
 
 COPY . .
 
-# ⚠️ IMPORTANTE: Limpia la caché de configuración y no dependas del .env
 RUN rm -f .env
 
 RUN composer install --no-dev --optimize-autoloader --no-interaction
@@ -35,12 +34,6 @@ RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available
 
 EXPOSE 80
 
-# 🔴 NUEVO COMANDO: limpia la caché y genera la key usando las variables de entorno
-RUN php artisan key:generate --force && \
-    php artisan config:cache && \
-    php artisan route:cache
-
-CMD php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan migrate --force && \
+# 🔴 COMANDO SIMPLIFICADO: sin key:generate ni config:cache
+CMD php artisan migrate --force && \
     apache2-foreground
