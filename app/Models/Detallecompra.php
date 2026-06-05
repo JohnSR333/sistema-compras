@@ -21,7 +21,7 @@ class DetalleCompra extends Model
 
     public function ordenCompra()
     {
-        return $this->belongsTo(OrdenCompra::class, 'ordencompra_id');
+        return $this->belongsTo(Ordencompra::class, 'ordencompra_id');
     }
 
     public function producto()

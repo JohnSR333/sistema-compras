@@ -24,6 +24,6 @@ class Producto extends Model
 
     public function detallesCompras()
     {
-        return $this->hasMany(DetalleCompra::class, 'producto_id');
+        return $this->hasMany(Detallecompra::class, 'producto_id');
     }
 }

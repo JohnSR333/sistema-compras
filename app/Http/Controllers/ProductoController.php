@@ -45,7 +45,14 @@ public function store(Request $request)
     if ($request->hasFile('imagen')) {
         $file = $request->file('imagen');
         $nombre = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-        $file->move(public_path('images/productos'), $nombre);
+        
+        // 🔥 SOLUCIÓN: Definir la ruta y crear la carpeta si no existe en el servidor
+        $targetPath = public_path('images/productos');
+        if (!file_exists($targetPath)) {
+            mkdir($targetPath, 0777, true);
+        }
+
+        $file->move($targetPath, $nombre);
         $rutaImagen = 'images/productos/' . $nombre;
     }
 

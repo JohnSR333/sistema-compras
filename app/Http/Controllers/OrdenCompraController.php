@@ -211,12 +211,17 @@ class OrdenCompraController extends Controller
 
     // PDF
     public function generarPDF($id)
-    {
-        $orden = Ordencompra::with(['proveedor', 'detalles.producto'])->findOrFail($id);
-        $data = ['orden' => $orden, 'fecha' => now()->format('d/m/Y H:i')];
-        $pdf = PDF::loadView('ordencompras.pdf', $data)->setPaper('a4', 'portrait');
-        return $pdf->stream('orden-compra-' . $orden->id . '.pdf');
-    }
+{
+    $orden = OrdenCompra::with(['proveedor', 'detalles.producto', 'pagos.metodoPago'])->findOrFail($id);
+
+    $data = [
+        'orden' => $orden,
+        'fecha' => now()->format('d/m/Y H:i'),
+    ];
+
+    $pdf = PDF::loadView('ordencompras.pdf', $data)->setPaper('a4', 'portrait');
+    return $pdf->stream('orden-compra-' . $orden->id . '.pdf');
+}
 
     // EXCEL
     public function generarExcel($id)

@@ -23,6 +23,6 @@ class Proveedor extends Model
 
     public function ordenCompras()
     {
-        return $this->hasMany(OrdenCompra::class, 'proveedor_id');
+        return $this->hasMany(Ordencompra::class, 'proveedor_id');
     }
 }

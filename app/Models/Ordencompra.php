@@ -28,7 +28,7 @@ class OrdenCompra extends Model
 
     public function detalles()
     {
-        return $this->hasMany(DetalleCompra::class, 'ordencompra_id');
+        return $this->hasMany(Detallecompra::class, 'ordencompra_id');
     }
 
     public function pagos()
