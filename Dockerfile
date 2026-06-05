@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
     libpq-dev
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
-RUN docker-php-ext-install gd mbstring pdo_mysql pdo_pgsql zip
+RUN docker-php-ext-install gd mbstring pdo pdo_mysql pdo_pgsql zip
 
 RUN a2enmod rewrite
 
@@ -23,7 +23,10 @@ WORKDIR /var/www/html
 
 COPY . .
 
-RUN composer install --no-dev --optimize-autoloader
+# ⚠️ IMPORTANTE: Limpia la caché de configuración y no dependas del .env
+RUN rm -f .env
+
+RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 RUN chown -R www-data:www-data storage bootstrap/cache
 RUN chmod -R 775 storage bootstrap/cache
@@ -32,10 +35,12 @@ RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available
 
 EXPOSE 80
 
-# 🔴 NUEVO: Script que ejecuta migraciones y crea usuario si no existe
-CMD php artisan key:generate && \
+# 🔴 NUEVO COMANDO: limpia la caché y genera la key usando las variables de entorno
+RUN php artisan key:generate --force && \
     php artisan config:cache && \
+    php artisan route:cache
+
+CMD php artisan config:cache && \
     php artisan route:cache && \
     php artisan migrate --force && \
-    php artisan db:seed --force && \
     apache2-foreground
