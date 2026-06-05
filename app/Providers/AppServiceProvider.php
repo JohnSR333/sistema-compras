@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\URL; // 🔴 IMPORTANTE: Esto va aquí arriba
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -17,11 +18,11 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot()
-{
-    // Esto obliga a Laravel a generar todos los enlaces con HTTPS en Render
-    if (config('app.env') === 'production' || env('FORCE_HTTPS') === true) {
-        URL::forceScheme('https');
+    public function boot(): void
+    {
+        // 🔴 IMPORTANTE: El código que agregamos va dentro de esta función
+        if (config('app.env') === 'production' || env('FORCE_HTTPS') === true) {
+            URL::forceScheme('https');
+        }
     }
-}
 }
