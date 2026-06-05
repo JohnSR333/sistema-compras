@@ -38,5 +38,4 @@ CMD php artisan key:generate && \
     php artisan route:cache && \
     php artisan migrate --force && \
     php artisan db:seed --force && \
-    RUN php artisan config:cache
     apache2-foreground
