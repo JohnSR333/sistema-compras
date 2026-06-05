@@ -33,7 +33,7 @@ class ProductoRequest extends FormRequest
                     Rule::unique('productos', 'nombre')->ignore($productoId),
                 ],
                 'preciocompra' => 'required|numeric|min:0',
-                'stockmaximo'  => 'required|integer|min:0',
+                'stockmaximo'  => 'required|integer|min:1',
                 'imagen'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             ];
         }
@@ -42,7 +42,7 @@ class ProductoRequest extends FormRequest
         return [
             'nombre'       => 'required|unique:productos,nombre',
             'preciocompra' => 'required|numeric|min:0',
-            'stockmaximo'  => 'required|integer|min:0',
+            'stockmaximo'  => 'required|integer|min:1',
             'imagen'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ];
     }

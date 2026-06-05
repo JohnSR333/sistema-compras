@@ -17,6 +17,7 @@ class OrdenCompraRequest extends FormRequest
             'proveedor_id' => 'required|exists:proveedores,id',
             'fecha' => 'required|date',
             'tipopago' => 'required|in:contado,credito',
+            'metodopago_id' => 'required|exists:metodopagos,id',
             'productos' => 'required|array|min:1',
             'productos.*.id' => 'required|exists:productos,id',
             'productos.*.cantidad' => 'required|integer|min:1',
@@ -29,6 +30,7 @@ class OrdenCompraRequest extends FormRequest
             'proveedor_id.required' => 'Debe seleccionar un proveedor',
             'fecha.required' => 'La fecha es obligatoria',
             'tipopago.required' => 'Debe seleccionar un tipo de pago',
+            'metodopago_id.required' => 'Debe seleccionar un método de pago',
             'productos.required' => 'Debe agregar al menos un producto',
             'productos.*.cantidad.min' => 'La cantidad debe ser al menos 1',
         ];

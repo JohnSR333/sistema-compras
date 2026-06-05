@@ -47,11 +47,9 @@ class DetalleCompraController extends Controller
 
         $producto = Producto::findOrFail($request->producto_id);
 
-        // 💡 aumenta stock
-        $producto->stockmaximo += $request->cantidad;
+        $producto->stock += $request->cantidad;
         $producto->save();
 
-        // 💡 crear detalle
         $detalle = Detallecompra::create([
             'ordencompra_id' => $request->ordencompra_id,
             'producto_id' => $request->producto_id,
@@ -105,15 +103,17 @@ class DetalleCompraController extends Controller
             'subtotal' => 'required|numeric|min:0'
         ]);
 
-        $producto = Producto::findOrFail($request->producto_id);
+        $productoAnterior = Producto::findOrFail($detalle->producto_id);
+        $productoActual = Producto::findOrFail($request->producto_id);
 
-        // revertir stock anterior
-        $producto->stockmaximo -= $detalle->cantidad;
+        $productoAnterior->stock -= $detalle->cantidad;
+        if ($productoAnterior->stock < 0) {
+            $productoAnterior->stock = 0;
+        }
+        $productoAnterior->save();
 
-        // aplicar nuevo stock
-        $producto->stockmaximo += $request->cantidad;
-
-        $producto->save();
+        $productoActual->stock += $request->cantidad;
+        $productoActual->save();
 
         $detalle->update([
             'ordencompra_id' => $request->ordencompra_id,
@@ -124,7 +124,7 @@ class DetalleCompraController extends Controller
         ]);
 
         Kardex::create([
-            'producto_id' => $producto->id,
+            'producto_id' => $productoActual->id,
             'tipo' => 'ajuste',
             'cantidad' => $request->cantidad,
             'referencia' => 'Edición detalle #' . $detalle->id,
@@ -144,7 +144,10 @@ class DetalleCompraController extends Controller
 
         $producto = Producto::findOrFail($detalle->producto_id);
 
-        $producto->stockmaximo -= $detalle->cantidad;
+        $producto->stock -= $detalle->cantidad;
+        if ($producto->stock < 0) {
+            $producto->stock = 0;
+        }
         $producto->save();
 
         Kardex::create([
