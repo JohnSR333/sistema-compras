@@ -39,10 +39,10 @@ public function generarExcelGeneral()
         return view('ordencompras.create', compact('proveedores', 'productos', 'metodosPago'));
     }
 
-public function store(Request $request)
+    public function store(Request $request)
     {
-        // TRAMPA 1: Ver si Laravel está rechazando el formulario
-        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+        // Validación básica
+        $request->validate([
             'proveedor_id' => 'required|exists:proveedores,id',
             'fecha' => 'required|date',
             'tipopago' => 'required|in:contado,credito',
@@ -51,28 +51,101 @@ public function store(Request $request)
             'productos.*.cantidad' => 'required|integer|min:1',
         ]);
 
-        if ($validator->fails()) {
-            dd('🚨 TRAMPA 1 (Error de Formulario):', $validator->errors()->all());
-        }
-
-        // TRAMPA 2: Ver si el problema es el cálculo del Stock
+        // VALIDACIÓN DE STOCK MÁXIMO
         foreach ($request->productos as $item) {
             $producto = Producto::find($item['id']);
             $nuevoStock = $producto->stock + $item['cantidad'];
             
             if ($nuevoStock > $producto->stockmaximo) {
-                dd(
-                    '🚨 TRAMPA 2 (Error de Stock Máximo):',
-                    'Producto: ' . $producto->nombre,
-                    'Stock actual que tiene en BD: ' . $producto->stock,
-                    'Cantidad que intentas comprar: ' . $item['cantidad'],
-                    'Stock máximo permitido en BD: ' . $producto->stockmaximo
-                );
+                $disponible = $producto->stockmaximo - $producto->stock;
+                return redirect()->back()
+                    ->withErrors(["No se puede comprar {$item['cantidad']} unidades de '{$producto->nombre}'. Solo puedes comprar hasta {$disponible} unidades."])
+                    ->withInput();
             }
         }
 
-        // TRAMPA 3: Ver si todo pasó limpio
-        dd('✅ TRAMPA 3: Todo pasó perfecto. El error está en la base de datos al guardar la Orden.');
+        $total = 0;
+
+        // Crear orden
+        $orden = Ordencompra::create([
+            'fecha' => $request->fecha,
+            'proveedor_id' => $request->proveedor_id,
+            'total' => 0,
+            'tipopago' => $request->tipopago,
+            'saldopendiente' => 0,
+            'estado' => '1',
+            'registradopor' => auth()->user()->name,
+        ]);
+
+        // Crear detalles y calcular total
+        foreach ($request->productos as $item) {
+            $producto = Producto::find($item['id']);
+            $subtotal = $producto->preciocompra * $item['cantidad'];
+            $total += $subtotal;
+
+            Detallecompra::create([
+                'ordencompra_id' => $orden->id,
+                'producto_id' => $item['id'],
+                'cantidad' => $item['cantidad'],
+                'subtotal' => $subtotal,
+                'registradopor' => auth()->user()->name,
+            ]);
+
+            // Aumentar stock
+            $producto->stock += $item['cantidad'];
+            $producto->save();
+        }
+
+        // LÓGICA SEGÚN TIPO DE PAGO
+        if ($request->tipopago == 'contado') {
+            // CONTADO: pago automático por el total
+            Pago::create([
+                'ordencompra_id' => $orden->id,
+                'fechapago' => now(),
+                'monto' => $total,
+                'metodopago_id' => $request->metodopago_id ?? 1,
+                'registradopor' => auth()->user()->name,
+            ]);
+            $orden->update(['total' => $total, 'saldopendiente' => 0]);
+            $mensaje = 'Orden de compra creada y PAGADA exitosamente';
+            
+        } else {
+            // CRÉDITO: con abono inicial
+            $abonoInicial = $request->abono_inicial ?? 0;
+            
+            if ($abonoInicial < 0) {
+                return back()->withErrors('El abono inicial no puede ser negativo')->withInput();
+            }
+            if ($abonoInicial > $total) {
+                return back()->withErrors('El abono inicial no puede ser mayor al total de la orden')->withInput();
+            }
+            
+            $nuevoSaldo = $total - $abonoInicial;
+            
+            $orden->update([
+                'total' => $total,
+                'saldopendiente' => $nuevoSaldo,
+            ]);
+            
+            // Si hay abono inicial, crear el pago
+            if ($abonoInicial > 0) {
+                Pago::create([
+                    'ordencompra_id' => $orden->id,
+                    'fechapago' => now(),
+                    'monto' => $abonoInicial,
+                    'metodopago_id' => $request->metodopago_id ?? 1,
+                    'registradopor' => auth()->user()->name,
+                ]);
+            }
+            
+            $mensaje = 'Orden de compra creada. ';
+            if ($abonoInicial > 0) {
+                $mensaje .= 'Abono inicial: $' . number_format($abonoInicial, 2) . '. ';
+            }
+            $mensaje .= 'Saldo pendiente: $' . number_format($nuevoSaldo, 2);
+        }
+
+        return redirect()->route('ordencompras.index')->with('successMsg', $mensaje);
     }
 
     public function show($id)
