@@ -9,7 +9,8 @@ class OrdenesComprasCompletoExport implements WithMultipleSheets
     public function sheets(): array
     {
         return [
-            new OrdenesComprasExport(),           // Hoja 1: Resumen de órdenes
+            // 🔥 CORRECCIÓN: Cambiamos OrdenesComprasExport por OrdenesExport
+            new OrdenesExport(),           // Hoja 1: Resumen de órdenes
             new OrdenesComprasPagosExport(),      // Hoja 2: Detalle de pagos
         ];
     }
