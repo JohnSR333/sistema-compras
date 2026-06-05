@@ -14,17 +14,16 @@ use Excel;
 use App\Exports\OrdenCompraExport;
 use App\Exports\OrdenesComprasExport;
 use App\Exports\OrdenesExport;
-use App\Exports\OrdenesComprasCompletoExport;
 
 class OrdenCompraController extends Controller
 {
     
 
+
 public function exportarExcel()
-    {
-        // Llamamos al archivo "Completo" o "General", que no pide una orden individual
-        return Excel::download(new \App\Exports\OrdenesComprasCompletoExport, 'ordenes_de_compra_general.xlsx');
-    }
+{
+    return Excel::download(new OrdenesExport(), 'ordenes-compras.xlsx');
+}
 
     public function index()
     {
