@@ -40,11 +40,11 @@
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label>Orden de Compra <strong style="color:red;">(*)</strong></label>
-                                            <select name="ordencompra_id" class="form-control" id="ordenSelect" required>
+                                            <select name="ordencompra_id" class="form-control select2" id="ordenSelect" required>
                                                 <option value="">Seleccione una orden</option>
                                                 @foreach($ordenes as $orden)
                                                     <option value="{{ $orden->id }}" data-saldo="{{ $orden->saldopendiente }}">
-                                                        Orden #{{ $orden->id }} - {{ $orden->proveedor->nombre }} - Saldo: ${{ number_format($orden->saldopendiente, 2) }}
+                                                        Orden #{{ $orden->id }} - {{ $orden->proveedor->nombre }} - Fecha: {{ date('d/m/Y', strtotime($orden->fecha)) }} - Saldo: ${{ number_format($orden->saldopendiente, 2) }}
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -64,7 +64,7 @@
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label>Método de Pago <strong style="color:red;">(*)</strong></label>
-                                            <select name="metodopago_id" class="form-control" required>
+                                            <select name="metodopago_id" class="form-control select2" required>
                                                 <option value="">Seleccione un método</option>
                                                 @foreach($metodos as $metodo)
                                                     <option value="{{ $metodo->id }}">{{ $metodo->nombre }}</option>
@@ -94,13 +94,21 @@
 
 @endsection
 
-@section('js')
+@push('scripts')
 <script>
     $(document).ready(function() {
-        $('#ordenSelect').change(function() {
+        $('.select2').select2({
+            theme: 'bootstrap4',
+            width: '100%',
+            placeholder: 'Buscar orden por número, proveedor, fecha o saldo',
+            allowClear: true,
+            language: 'es'
+        });
+
+        $('#ordenSelect').on('change', function() {
             var saldo = $(this).find(':selected').data('saldo');
-            if (saldo) {
-                $('#saldoInfo').html('Saldo pendiente de la orden: $' + saldo.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            if (saldo !== undefined && !isNaN(saldo)) {
+                $('#saldoInfo').html('Saldo pendiente de la orden: $' + parseFloat(saldo).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
                 $('#montoInput').attr('max', saldo);
             } else {
                 $('#saldoInfo').html('');
@@ -109,4 +117,4 @@
         });
     });
 </script>
-@endsection
+@endpush

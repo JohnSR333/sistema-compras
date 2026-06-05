@@ -29,10 +29,10 @@
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label>Orden de Compra <strong style="color:red;">(*)</strong></label>
-                                            <select name="ordencompra_id" class="form-control" required>
+                                            <select name="ordencompra_id" class="form-control select2" required>
                                                 @foreach($ordenes as $orden)
                                                     <option value="{{ $orden->id }}" {{ $pago->ordencompra_id == $orden->id ? 'selected' : '' }}>
-                                                        Orden #{{ $orden->id }} - {{ $orden->proveedor->nombre }}
+                                                        Orden #{{ $orden->id }} - {{ $orden->proveedor->nombre }} - Fecha: {{ date('d/m/Y', strtotime($orden->fecha)) }}
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -51,7 +51,7 @@
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label>Método de Pago <strong style="color:red;">(*)</strong></label>
-                                            <select name="metodopago_id" class="form-control" required>
+                                            <select name="metodopago_id" class="form-control select2" required>
                                                 @foreach($metodos as $metodo)
                                                     <option value="{{ $metodo->id }}" {{ $pago->metodopago_id == $metodo->id ? 'selected' : '' }}>
                                                         {{ $metodo->nombre }}
@@ -79,5 +79,19 @@
         </div>
     </section>
 </div>
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        $('.select2').select2({
+            theme: 'bootstrap4',
+            width: '100%',
+            placeholder: 'Buscar orden por número, proveedor o fecha',
+            allowClear: true,
+            language: 'es'
+        });
+    });
+</script>
+@endpush
 
 @endsection
