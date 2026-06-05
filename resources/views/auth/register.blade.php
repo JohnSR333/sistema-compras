@@ -1,44 +1,82 @@
-@extends('layouts.login_layout')
+@extends('layouts.applogin')
 
-@section('title', 'Registrarse')
+@section('title', 'Registro')
 
 @section('content')
-<div class="card">
-    <div class="card-header bg-primary text-white text-center">
-        <h3 class="mb-0">Registro de Usuario</h3>
-    </div>
-    <div class="card-body">
-        @if($errors->any())
-            <div class="alert alert-danger">
-                @foreach($errors->all() as $error)
-                    {{ $error }}<br>
-                @endforeach
+    <div class="register-box">
+        <div class="card card-outline card-primary">
+            <div class="card-header text-center">
+                <img src="{{ asset('backend/dist/img/image_login.jpeg') }}" alt="logo"  width="310" height="310">
             </div>
-        @endif
-
-        <form method="POST" action="{{ route('register') }}">
-            @csrf
-            <div class="mb-3">
-                <label class="form-label">Nombre</label>
-                <input type="text" name="name" class="form-control" value="{{ old('name') }}" required>
+            <div class="card-body">
+                <p class="login-box-msg">{{ __('Register') }}</p>
+                <form method="POST" action="{{ route('register') }}">
+                    @csrf
+                    <div class="input-group mb-3">
+                        <input id="name" type="text" class="form-control @error('name') is-invalid @enderror"
+                            name="name" value="{{ old('name') }}" required autocomplete="name" autofocus
+                            placeholder="Nombre">
+                        @error('name')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-user"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input id="email" type="email" class="form-control @error('email') is-invalid @enderror"
+                            name="email" value="{{ old('email') }}" required autocomplete="email" placeholder="Correo">
+                        @error('email')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-envelope"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input id="password" type="password" class="form-control @error('password') is-invalid @enderror"
+                            name="password" required autocomplete="new-password" placeholder="Contraseña">
+                        @error('password')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-lock"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input id="password-confirm" type="password" class="form-control" name="password_confirmation"
+                            required autocomplete="new-password" placeholder="Confirmar Contraseña">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-lock"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <button type="submit" class="btn btn-primary btn-block">{{ __('Register') }}</button>
+                        </div>
+                        <div class="col-8">
+                            <a href="{{ route('login') }}"
+                                    class="btn btn-success btn-block">{{ __('Ya tengo una cuenta') }}</a>
+                        </div>
+                        </div>
+                    </div>
+                </form>
             </div>
-            <div class="mb-3">
-                <label class="form-label">Correo Electrónico</label>
-                <input type="email" name="email" class="form-control" value="{{ old('email') }}" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Contraseña</label>
-                <input type="password" name="password" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Confirmar Contraseña</label>
-                <input type="password" name="password_confirmation" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-primary w-100 py-2">Registrarse</button>
-        </form>
-        <div class="text-center mt-3">
-            <a href="{{ route('login') }}" class="text-decoration-none">¿Ya tienes cuenta? Inicia sesión</a>
         </div>
     </div>
-</div>
 @endsection
+
