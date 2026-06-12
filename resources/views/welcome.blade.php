@@ -7,8 +7,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md border border-gray-200">
+    <div class="bg-white rounded-2xl shadow-2xl p-6 sm:p-8 w-full max-w-md border border-gray-200">
         <div class="text-center mb-8">
+            <img src="{{ asset('backend/dist/img/image_login.jpeg') }}"
+                 alt="Logo del sistema"
+                 class="mx-auto h-16 w-auto sm:h-20 md:h-24 object-contain mb-4">
             <h1 class="text-3xl font-bold text-gray-900 mb-2">Bienvenido</h1>
             <p class="text-gray-600">Elige una opción para continuar</p>
         </div>
@@ -26,7 +29,7 @@
         </div>
         
         <div class="mt-8 text-center">
-            <p class="text-sm text-gray-500">¿Problemas? <a href="#" class="text-blue-600 hover:underline">Contáctanos</a></p>
+            <p class="text-sm text-gray-500">¿Problemas? <a href="{{ route('contacto') }}" class="text-blue-600 hover:underline">Contáctanos</a></p>
         </div>
     </div>
 </body>

@@ -100,7 +100,7 @@
         $('.select2').select2({
             theme: 'bootstrap4',
             width: '100%',
-            placeholder: 'Buscar orden por número, proveedor, fecha o saldo',
+            placeholder: 'Seleccione una opción',
             allowClear: true,
             language: 'es'
         });
